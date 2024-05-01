@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmhqnfqnfjgy5"]
+[gd_scene load_steps=18 format=3 uid="uid://bmhqnfqnfjgy5"]
 
 [ext_resource type="Texture2D" uid="uid://igjye463y6d7" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_g2xko"]
 [ext_resource type="PackedScene" uid="uid://uwjofkm4iyb2" path="res://addons/rigid_character_body_3d/example/rigid_player.tscn" id="3_e4etq"]
@@ -68,6 +68,36 @@ albedo_color = Color(0, 0.501961, 1, 0.666667)
 material = SubResource("StandardMaterial3D_t3gbo")
 size = Vector3(3, 0.6, 3)
 
+[sub_resource type="GDScript" id="GDScript_1be5n"]
+resource_name = "cube_spawner"
+script/source = "extends Node3D
+
+
+func _ready():
+	for i in range(1, 4):
+		spawn_cube(i as float / 3.0)
+		await get_tree().create_timer(2).timeout
+
+func spawn_cube(size: float):
+	var p = global_position
+	var r = RigidBody3D.new()
+	r.mass = size
+	r.set_collision_layer_value(1, true)
+	add_child(r)
+	r.global_position = global_position
+	r.global_rotation_degrees = Vector3(randf_range(0, 360), randf_range(0, 360), randf_range(0, 360))
+	var c = CollisionShape3D.new()
+	var s = BoxShape3D.new()
+	s.size = Vector3.ONE * r.mass
+	r.add_child(c)
+	c.shape = s
+	var m = MeshInstance3D.new()
+	var bm = BoxMesh.new()
+	bm.size = s.size
+	r.add_child(m)
+	m.mesh = bm
+"
+
 [node name="Example" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -103,7 +133,7 @@ mesh = SubResource("BoxMesh_3t46o")
 skeleton = NodePath("../../..")
 
 [node name="MovingWall2" type="AnimatableBody3D" parent="Obstacles"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -3, -0.2, 8)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -11, 1.75, 10)
 script = SubResource("GDScript_edptv")
 frequency = 8.0
 
@@ -204,3 +234,7 @@ depth = 1.001
 anchor = 0
 anchor_fixed = true
 material = null
+
+[node name="CubeSpawner" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.59556, 5.77403, 6.5996)
+script = SubResource("GDScript_1be5n")

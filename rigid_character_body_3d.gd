@@ -2,7 +2,10 @@ extends RigidBody3D
 class_name RigidCharacterBody3D
 
 ## The node used as orientation reference.
-@export var camera: Camera3D
+## This would usually be the camera.
+## If this node will not be used for the player or if there's no camera,
+## you can also set it to this node.
+@export var orientation_node: Camera3D
 ## World space gravity vector.
 @export var gravity: Vector3 = Vector3(0, -9.8, 0)
 ## The force used to jump with.
@@ -100,7 +103,7 @@ func apply_movement(delta: float):
 	if Input.is_action_just_pressed("run") and is_on_floor:
 		is_running = true
 	
-	var right = camera.global_basis.x
+	var right = orientation_node.global_basis.x
 	var forward = floor_normal.cross(right)
 	var dir = ((forward * input_direction.y) + (right * input_direction.x)).normalized()
 	if dir:

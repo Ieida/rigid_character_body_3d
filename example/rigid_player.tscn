@@ -30,11 +30,11 @@ func _process(_delta):
 	rotation_degrees.x = x_rotation
 "
 
-[node name="RigidPlayer" type="RigidBody3D" node_paths=PackedStringArray("camera")]
+[node name="RigidPlayer" type="RigidBody3D" node_paths=PackedStringArray("orientation_node")]
 physics_material_override = SubResource("PhysicsMaterial_3ggag")
 gravity_scale = 0.0
 script = ExtResource("1_ab1qo")
-camera = NodePath("Camera3D")
+orientation_node = NodePath("Camera3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
