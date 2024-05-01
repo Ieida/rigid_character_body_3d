@@ -1,0 +1,206 @@
+[gd_scene load_steps=17 format=3 uid="uid://bmhqnfqnfjgy5"]
+
+[ext_resource type="Texture2D" uid="uid://igjye463y6d7" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_g2xko"]
+[ext_resource type="PackedScene" uid="uid://uwjofkm4iyb2" path="res://addons/rigid_character_body_3d/example/rigid_player.tscn" id="3_e4etq"]
+[ext_resource type="Script" path="res://addons/proto_shape/proto_ramp/proto_ramp.gd" id="3_o37q5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_10kov"]
+
+[sub_resource type="Sky" id="Sky_w5lt0"]
+sky_material = SubResource("ProceduralSkyMaterial_10kov")
+
+[sub_resource type="Environment" id="Environment_yp2li"]
+background_mode = 2
+sky = SubResource("Sky_w5lt0")
+ambient_light_source = 3
+reflected_light_source = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5iaxh"]
+albedo_texture = ExtResource("1_g2xko")
+uv1_triplanar = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dbtwq"]
+material = SubResource("StandardMaterial3D_5iaxh")
+size = Vector2(200, 200)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_75t77"]
+data = PackedVector3Array(100, 0, 100, -100, 0, 100, 100, 0, -100, -100, 0, 100, -100, 0, -100, 100, 0, -100)
+
+[sub_resource type="GDScript" id="GDScript_edptv"]
+resource_name = "moving_wall"
+script/source = "extends AnimatableBody3D
+
+var start_position: Vector3
+var end_position: Vector3
+var time: float
+@export var frequency: float = 2
+@export var length: float = 2
+
+func _ready():
+	start_position = position
+	end_position = start_position + -global_basis.z * length
+
+func _physics_process(delta):
+	time += delta
+	var w = sin(time * frequency)
+	w = remap(w, -1, 1, 0, 1)
+	position = start_position.lerp(end_position, w)
+"
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_2ojj7"]
+data = PackedVector3Array(-1, 1, 0.25, 1, 1, 0.25, -1, -1, 0.25, 1, 1, 0.25, 1, -1, 0.25, -1, -1, 0.25, 1, 1, -0.25, -1, 1, -0.25, 1, -1, -0.25, -1, 1, -0.25, -1, -1, -0.25, 1, -1, -0.25, 1, 1, 0.25, 1, 1, -0.25, 1, -1, 0.25, 1, 1, -0.25, 1, -1, -0.25, 1, -1, 0.25, -1, 1, -0.25, -1, 1, 0.25, -1, -1, -0.25, -1, 1, 0.25, -1, -1, 0.25, -1, -1, -0.25, 1, 1, 0.25, -1, 1, 0.25, 1, 1, -0.25, -1, 1, 0.25, -1, 1, -0.25, 1, 1, -0.25, -1, -1, 0.25, 1, -1, 0.25, -1, -1, -0.25, 1, -1, 0.25, 1, -1, -0.25, -1, -1, -0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3t46o"]
+size = Vector3(2, 2, 0.5)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_4ymrt"]
+friction = 100.0
+rough = true
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_mfogw"]
+data = PackedVector3Array(-1.5, 0.3, 1.5, 1.5, 0.3, 1.5, -1.5, -0.3, 1.5, 1.5, 0.3, 1.5, 1.5, -0.3, 1.5, -1.5, -0.3, 1.5, 1.5, 0.3, -1.5, -1.5, 0.3, -1.5, 1.5, -0.3, -1.5, -1.5, 0.3, -1.5, -1.5, -0.3, -1.5, 1.5, -0.3, -1.5, 1.5, 0.3, 1.5, 1.5, 0.3, -1.5, 1.5, -0.3, 1.5, 1.5, 0.3, -1.5, 1.5, -0.3, -1.5, 1.5, -0.3, 1.5, -1.5, 0.3, -1.5, -1.5, 0.3, 1.5, -1.5, -0.3, -1.5, -1.5, 0.3, 1.5, -1.5, -0.3, 1.5, -1.5, -0.3, -1.5, 1.5, 0.3, 1.5, -1.5, 0.3, 1.5, 1.5, 0.3, -1.5, -1.5, 0.3, 1.5, -1.5, 0.3, -1.5, 1.5, 0.3, -1.5, -1.5, -0.3, 1.5, 1.5, -0.3, 1.5, -1.5, -0.3, -1.5, 1.5, -0.3, 1.5, 1.5, -0.3, -1.5, -1.5, -0.3, -1.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t3gbo"]
+transparency = 1
+albedo_color = Color(0, 0.501961, 1, 0.666667)
+
+[sub_resource type="BoxMesh" id="BoxMesh_koi6b"]
+material = SubResource("StandardMaterial3D_t3gbo")
+size = Vector3(3, 0.6, 3)
+
+[node name="Example" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_yp2li")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_dbtwq")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_75t77")
+
+[node name="RigidPlayer" parent="." instance=ExtResource("3_e4etq")]
+
+[node name="Obstacles" type="Node3D" parent="."]
+
+[node name="MovingWall" type="AnimatableBody3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 8)
+script = SubResource("GDScript_edptv")
+frequency = 4.0
+length = 5.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/MovingWall"]
+shape = SubResource("ConcavePolygonShape3D_2ojj7")
+
+[node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall"]
+mesh = SubResource("BoxMesh_3t46o")
+skeleton = NodePath("../../..")
+
+[node name="MovingWall2" type="AnimatableBody3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -3, -0.2, 8)
+script = SubResource("GDScript_edptv")
+frequency = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/MovingWall2"]
+shape = SubResource("ConcavePolygonShape3D_2ojj7")
+
+[node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall2"]
+mesh = SubResource("BoxMesh_3t46o")
+skeleton = NodePath("../../..")
+
+[node name="MovingWall3" type="AnimatableBody3D" parent="Obstacles"]
+transform = Transform3D(-4.37114e-08, 0, 1, 1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 1, 0, -13, 1.75, 8)
+script = SubResource("GDScript_edptv")
+frequency = 0.5
+length = 6.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/MovingWall3"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+shape = SubResource("ConcavePolygonShape3D_2ojj7")
+
+[node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall3"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("BoxMesh_3t46o")
+skeleton = NodePath("../../..")
+
+[node name="MovingWall4" type="AnimatableBody3D" parent="Obstacles"]
+transform = Transform3D(-4.37114e-08, 0, 1, 1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 1, 0, -13, 1.75, 6)
+physics_material_override = SubResource("PhysicsMaterial_4ymrt")
+script = SubResource("GDScript_edptv")
+frequency = 4.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/MovingWall4"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+shape = SubResource("ConcavePolygonShape3D_2ojj7")
+
+[node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall4"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("BoxMesh_3t46o")
+skeleton = NodePath("../../..")
+
+[node name="Water" type="Area3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.3, 3)
+linear_damp_space_override = 1
+linear_damp = 5.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/Water"]
+shape = SubResource("ConcavePolygonShape3D_mfogw")
+
+[node name="Model" type="MeshInstance3D" parent="Obstacles/Water"]
+mesh = SubResource("BoxMesh_koi6b")
+skeleton = NodePath("../../..")
+
+[node name="Stairs" type="CSGCombiner3D" parent="Obstacles"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 8)
+use_collision = true
+script = ExtResource("3_o37q5")
+type = 1
+width = 2.001
+height = 2.001
+depth = 2.001
+anchor = 0
+anchor_fixed = true
+material = null
+calculation = 0
+steps = 8
+fill = true
+
+[node name="Platform" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 6)
+use_collision = true
+size = Vector3(2, 2, 2)
+
+[node name="Platform2" type="CSGBox3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 8)
+use_collision = true
+size = Vector3(2, 2, 2)
+
+[node name="Slope" type="CSGCombiner3D" parent="Obstacles"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 6)
+use_collision = true
+script = ExtResource("3_o37q5")
+type = 0
+width = 2.001
+height = 2.001
+depth = 2.001
+anchor = 0
+anchor_fixed = true
+material = null
+
+[node name="SlopeSteep" type="CSGCombiner3D" parent="Obstacles"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 4)
+use_collision = true
+script = ExtResource("3_o37q5")
+type = 0
+width = 2.001
+height = 2.001
+depth = 1.001
+anchor = 0
+anchor_fixed = true
+material = null

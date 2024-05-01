@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://uwjofkm4iyb2"]
+
+[ext_resource type="Script" path="res://addons/rigid_character_body_3d/example/rigid_player.gd" id="1_ab1qo"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_3ggag"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tnv27"]
+height = 1.5
+
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_xe7iv"]
+slide_on_slope = true
+
+[sub_resource type="GDScript" id="GDScript_p6pkv"]
+resource_name = "camera"
+script/source = "extends Camera3D
+
+
+@export var sensitivity: float = 0.2
+var x_rotation: float
+var y_rotation: float
+
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		x_rotation += -event.relative.y * sensitivity
+		rotate_y(deg_to_rad(-event.relative.x * sensitivity))
+
+func _process(_delta):
+	x_rotation = clampf(x_rotation, -80, 80)
+	rotation_degrees.x = x_rotation
+"
+
+[node name="RigidPlayer" type="RigidBody3D" node_paths=PackedStringArray("camera")]
+physics_material_override = SubResource("PhysicsMaterial_3ggag")
+gravity_scale = 0.0
+script = ExtResource("1_ab1qo")
+camera = NodePath("Camera3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("CapsuleShape3D_tnv27")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("SeparationRayShape3D_xe7iv")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -4.37114e-08)
+script = SubResource("GDScript_p6pkv")
