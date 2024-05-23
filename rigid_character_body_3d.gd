@@ -1,11 +1,36 @@
+#Copyright 2024 David Krstevski
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the “Software”), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is furnished
+#to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 extends RigidBody3D
 class_name RigidCharacterBody3D
 
+
 ## The node used as orientation reference.
-## This would usually be the camera.
-## If this node will not be used for the player or if there's no camera,
-## you can also set it to this node.
-@export var orientation_node: Camera3D
+## If this node will be used for the player, this
+## variable should be set to the player's camera.
+## If it is null, the current node will be
+## used as orientation reference.
+@export var orientation_node: Node3D:
+	get:
+		if not orientation_node: return self
+		return orientation_node
 ## World space gravity vector.
 @export var gravity: Vector3 = Vector3(0, -9.8, 0)
 ## The force used to jump with.
@@ -20,6 +45,8 @@ class_name RigidCharacterBody3D
 @export var drag_force: float = 0.1
 ## The density of the fluid the body is moving in. By default it's set to the density of air.
 @export var fluid_density: float = 1.293
+
+
 var is_on_floor: bool
 var floor_normal: Vector3 = Vector3.UP
 var is_on_wall: bool
@@ -74,6 +101,8 @@ func _process_state():
 		is_on_floor = d >= 0.5
 		if is_on_floor:
 			floor_normal = n
+		else:
+			floor_normal = global_basis.y
 		
 		is_on_wall = d < 0.5 and d > -0.5
 		if is_on_wall:
@@ -82,6 +111,7 @@ func _process_state():
 		is_on_ceiling = d <= -0.5
 		if is_on_ceiling:
 			ceiling_normal = n
+
 
 func apply_drag(delta: float):
 	var v = linear_velocity.length()
@@ -103,8 +133,8 @@ func apply_movement(delta: float):
 	if Input.is_action_just_pressed("run") and is_on_floor:
 		is_running = true
 	
-	var right = orientation_node.global_basis.x
-	var forward = floor_normal.cross(right)
+	var forward = floor_normal.cross(orientation_node.global_basis.x)
+	var right = forward.cross(floor_normal)
 	var dir = ((forward * input_direction.y) + (right * input_direction.x)).normalized()
 	if dir:
 		var move_forc = air_force if not is_on_floor else run_force if is_running else walk_force
@@ -112,8 +142,10 @@ func apply_movement(delta: float):
 	elif is_running:
 		is_running = false
 
+
 func process_character_input():
 	pass
+
 
 func reset_input():
 	input_direction = Vector2.ZERO

@@ -1,8 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://bmhqnfqnfjgy5"]
+[gd_scene load_steps=17 format=3 uid="uid://bmhqnfqnfjgy5"]
 
 [ext_resource type="Texture2D" uid="uid://igjye463y6d7" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_g2xko"]
 [ext_resource type="PackedScene" uid="uid://uwjofkm4iyb2" path="res://addons/rigid_character_body_3d/example/rigid_player.tscn" id="3_e4etq"]
-[ext_resource type="Script" path="res://addons/proto_shape/proto_ramp/proto_ramp.gd" id="3_o37q5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_10kov"]
 
@@ -28,7 +27,28 @@ data = PackedVector3Array(100, 0, 100, -100, 0, 100, 100, 0, -100, -100, 0, 100,
 
 [sub_resource type="GDScript" id="GDScript_edptv"]
 resource_name = "moving_wall"
-script/source = "extends AnimatableBody3D
+script/source = "#Copyright 2024 David Krstevski
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the “Software”), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is furnished
+#to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+extends AnimatableBody3D
+
 
 var start_position: Vector3
 var end_position: Vector3
@@ -36,9 +56,11 @@ var time: float
 @export var frequency: float = 2
 @export var length: float = 2
 
+
 func _ready():
 	start_position = position
 	end_position = start_position + -global_basis.z * length
+
 
 func _physics_process(delta):
 	time += delta
@@ -70,13 +92,34 @@ size = Vector3(3, 0.6, 3)
 
 [sub_resource type="GDScript" id="GDScript_1be5n"]
 resource_name = "cube_spawner"
-script/source = "extends Node3D
+script/source = "#Copyright 2024 David Krstevski
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the “Software”), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is furnished
+#to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+extends Node3D
 
 
 func _ready():
 	for i in range(1, 4):
 		spawn_cube(i as float / 3.0)
 		await get_tree().create_timer(2).timeout
+
 
 func spawn_cube(size: float):
 	var p = global_position
@@ -116,6 +159,7 @@ mesh = SubResource("PlaneMesh_dbtwq")
 shape = SubResource("ConcavePolygonShape3D_75t77")
 
 [node name="RigidPlayer" parent="." instance=ExtResource("3_e4etq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Obstacles" type="Node3D" parent="."]
 
@@ -186,21 +230,6 @@ shape = SubResource("ConcavePolygonShape3D_mfogw")
 mesh = SubResource("BoxMesh_koi6b")
 skeleton = NodePath("../../..")
 
-[node name="Stairs" type="CSGCombiner3D" parent="Obstacles"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 8)
-use_collision = true
-script = ExtResource("3_o37q5")
-type = 1
-width = 2.001
-height = 2.001
-depth = 2.001
-anchor = 0
-anchor_fixed = true
-material = null
-calculation = 0
-steps = 8
-fill = true
-
 [node name="Platform" type="CSGBox3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 6)
 use_collision = true
@@ -211,29 +240,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 8)
 use_collision = true
 size = Vector3(2, 2, 2)
 
-[node name="Slope" type="CSGCombiner3D" parent="Obstacles"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 6)
+[node name="Slope" type="CSGPolygon3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 7)
 use_collision = true
-script = ExtResource("3_o37q5")
-type = 0
-width = 2.001
-height = 2.001
-depth = 2.001
-anchor = 0
-anchor_fixed = true
-material = null
+polygon = PackedVector2Array(0, 2, 0, 0, 2, 0)
+depth = 2.0
 
-[node name="SlopeSteep" type="CSGCombiner3D" parent="Obstacles"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8, 0, 4)
+[node name="Stairs" type="CSGPolygon3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 9)
 use_collision = true
-script = ExtResource("3_o37q5")
-type = 0
-width = 2.001
-height = 2.001
-depth = 1.001
-anchor = 0
-anchor_fixed = true
-material = null
+polygon = PackedVector2Array(0, 2, 0, 0, 2, 0, 2, 0.2, 1.8, 0.2, 1.8, 0.4, 1.6, 0.4, 1.6, 0.6, 1.4, 0.6, 1.4, 0.8, 1.2, 0.8, 1.2, 1, 1, 1, 1, 1.2, 0.8, 1.2, 0.8, 1.4, 0.6, 1.4, 0.6, 1.6, 0.4, 1.6, 0.4, 1.8, 0.2, 1.8, 0.2, 2)
+depth = 2.0
+
+[node name="SteepSlope" type="CSGPolygon3D" parent="Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 5)
+use_collision = true
+polygon = PackedVector2Array(1, 2, 1, 0, 2, 0)
+depth = 2.0
 
 [node name="CubeSpawner" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.59556, 5.77403, 6.5996)
