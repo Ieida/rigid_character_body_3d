@@ -1,6 +1,5 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmhqnfqnfjgy5"]
+[gd_scene load_steps=16 format=3 uid="uid://bmhqnfqnfjgy5"]
 
-[ext_resource type="Texture2D" uid="uid://igjye463y6d7" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="1_g2xko"]
 [ext_resource type="PackedScene" uid="uid://uwjofkm4iyb2" path="res://addons/rigid_character_body_3d/example/rigid_player.tscn" id="3_e4etq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_10kov"]
@@ -15,7 +14,7 @@ ambient_light_source = 3
 reflected_light_source = 2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5iaxh"]
-albedo_texture = ExtResource("1_g2xko")
+albedo_color = Color(0.5, 0.5, 0.5, 1)
 uv1_triplanar = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_dbtwq"]
@@ -175,6 +174,7 @@ shape = SubResource("ConcavePolygonShape3D_2ojj7")
 [node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall"]
 mesh = SubResource("BoxMesh_3t46o")
 skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="MovingWall2" type="AnimatableBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -11, 1.75, 10)
@@ -187,6 +187,7 @@ shape = SubResource("ConcavePolygonShape3D_2ojj7")
 [node name="Model" type="MeshInstance3D" parent="Obstacles/MovingWall2"]
 mesh = SubResource("BoxMesh_3t46o")
 skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="MovingWall3" type="AnimatableBody3D" parent="Obstacles"]
 transform = Transform3D(-4.37114e-08, 0, 1, 1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 1, 0, -13, 1.75, 8)
@@ -202,6 +203,7 @@ shape = SubResource("ConcavePolygonShape3D_2ojj7")
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("BoxMesh_3t46o")
 skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="MovingWall4" type="AnimatableBody3D" parent="Obstacles"]
 transform = Transform3D(-4.37114e-08, 0, 1, 1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 1, 0, -13, 1.75, 6)
@@ -217,6 +219,7 @@ shape = SubResource("ConcavePolygonShape3D_2ojj7")
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("BoxMesh_3t46o")
 skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="Water" type="Area3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.3, 3)
@@ -234,29 +237,34 @@ skeleton = NodePath("../../..")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 6)
 use_collision = true
 size = Vector3(2, 2, 2)
+material = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="Platform2" type="CSGBox3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1, 8)
 use_collision = true
 size = Vector3(2, 2, 2)
+material = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="Slope" type="CSGPolygon3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 7)
 use_collision = true
 polygon = PackedVector2Array(0, 2, 0, 0, 2, 0)
 depth = 2.0
+material = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="Stairs" type="CSGPolygon3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 9)
 use_collision = true
 polygon = PackedVector2Array(0, 2, 0, 0, 2, 0, 2, 0.2, 1.8, 0.2, 1.8, 0.4, 1.6, 0.4, 1.6, 0.6, 1.4, 0.6, 1.4, 0.8, 1.2, 0.8, 1.2, 1, 1, 1, 1, 1.2, 0.8, 1.2, 0.8, 1.4, 0.6, 1.4, 0.6, 1.6, 0.4, 1.6, 0.4, 1.8, 0.2, 1.8, 0.2, 2)
 depth = 2.0
+material = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="SteepSlope" type="CSGPolygon3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 5)
 use_collision = true
 polygon = PackedVector2Array(1, 2, 1, 0, 2, 0)
 depth = 2.0
+material = SubResource("StandardMaterial3D_5iaxh")
 
 [node name="CubeSpawner" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.59556, 5.77403, 6.5996)
